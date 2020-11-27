@@ -128,14 +128,66 @@ t = parser(read)
 head(t)
 tail(t)
 
+#view some of the samples with taxonomic data
 t %>% filter(TAXA_NUM>3) %>% filter(!is.na(LATITUDE)) %>% tail(20)
+
 ## Download HTML for TAXA_LINK
 dir.create('cgi-bin')
-for(file in na.omit(t$TAXA_LINK)){
-  download.file(paste('https://geochange.er.usgs.gov', file, sep=''), destfile=paste(paste('.', file, sep='')))
+
+for(row in 1:nrow(t)){
+  if(t$TAXA_NUM[row] > 0){
+    print(paste('get taxa for', t$SAMPLE[row]))
+    download.file(paste('https://geochange.er.usgs.gov', t$TAXA_LINK[row], sep=''), destfile=paste('cgi-bin/', t$SAMPLE[row], "_taxa.html", sep=''))
+  }
+  if(t$AGES_NUM[row] > 0){
+    print(paste('get ages for', t$SAMPLE[row]))
+    download.file(paste('https://geochange.er.usgs.gov', t$AGES_LINK[row], sep=''), destfile=paste('cgi-bin/', t$SAMPLE[row], "_ages.html", sep=''))
+  }
 }
 
-for(age_file in na.omit(t$AGES_LINK)){
-  download.file(paste('https://geochange.er.usgs.gov', age_file, sep=''), destfile=paste(paste('.', age_file, sep='')))
+####################
+#ENTER TAXA AND AGES PARSING PHASE
+# <TR BGCOLOR="CCCCCC"><TH>TAXA</TH><TH>TYPE OF MATERIAL</TH><TH>ORIG.COUNT</TH><TH>ABUNDANCE CODE</TH></TR>
+taxa = data.frame(SAMPLE=character(),
+                  TAXA=character(),
+                  TYPE_OF_MATERIAL=character(),
+                  ORIG_COUNT=numeric(),
+                  ABUNDANCE_CODE=numeric())
+
+#<TR BGCOLOR="CCCCCC"><TH>LAB ID</TH><TH>C14 AGE</TH><TH>STD DEV</TH><TH>MATERIAL DATED</TH><TH>COMMENTS</TH></TR>
+ages = data.frame(SAMPLE=character(),
+                  LAB_ID=character(),
+                  C14_AGE=numeric(),
+                  STD_DEV=numeric(),
+                  MATERIAL_DATED=character(),
+                  COMMENTS=character())
+taxa_line = 1
+age_line = 1
+
+
+for(row in 1:nrow(t)){
+  if(t$TAXA_NUM[row] > 0){
+    print(paste('parse taxa for', t$SAMPLE[row]))
+    sub_read_taxa = read_delim(paste('cgi-bin/', t$SAMPLE[row], "_taxa.html", sep=''), delim='^') 
+    
+    ##parse taxa
+    
+    
+    taxa_line = taxa_line+1
+  }
+  if(t$AGES_NUM[row] > 0){
+    print(paste('get ages for', t$SAMPLE[row]))
+    sub_read_ages = read_delim(paste('cgi-bin/', t$SAMPLE[row], "_ages.html", sep=''), delim='^') 
+    
+    
+    #parse ages
+    
+    
+    age_line = age_line+1
+  }
 }
+
+
+
+
 
