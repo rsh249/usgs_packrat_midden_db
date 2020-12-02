@@ -50,7 +50,7 @@ parser = function(html) {
       #2 <TR><TD COLSPAN="2"><B>SAMPLE:</B> BCK10 &nbsp; <B>SITE:</B> Buffalo Creek Lookout &nbsp; <B>LOCALITY:</B> (no data) <BR>
       if(grepl('SAMPLE', html[z,])){
         p2 = str_split(html[z,], '[<>]')
-        catch[line, 'SAMPLE'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_trim();
+        catch[line, 'SAMPLE'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_replace("[/]", '_') %>% str_trim();
         catch[line, 'SITE'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
         catch[line, 'LOCALITY'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
       }
@@ -152,7 +152,8 @@ taxa = data.frame(SAMPLE=character(),
                   TAXA=character(),
                   TYPE_OF_MATERIAL=character(),
                   ORIG_COUNT=numeric(),
-                  ABUNDANCE_CODE=numeric())
+                  ABUNDANCE_CODE=numeric(),
+                  stringsAsFactors = F)
 
 #<TR BGCOLOR="CCCCCC"><TH>LAB ID</TH><TH>C14 AGE</TH><TH>STD DEV</TH><TH>MATERIAL DATED</TH><TH>COMMENTS</TH></TR>
 ages = data.frame(SAMPLE=character(),
@@ -160,34 +161,58 @@ ages = data.frame(SAMPLE=character(),
                   C14_AGE=numeric(),
                   STD_DEV=numeric(),
                   MATERIAL_DATED=character(),
-                  COMMENTS=character())
+                  COMMENTS=character(),
+                  stringsAsFactors = F)
 taxa_line = 1
-age_line = 1
+ages_line = 1
 
 
 for(row in 1:nrow(t)){
   if(t$TAXA_NUM[row] > 0){
     print(paste('parse taxa for', t$SAMPLE[row]))
     sub_read_taxa = read_delim(paste('cgi-bin/', t$SAMPLE[row], "_taxa.html", sep=''), delim='^') 
-    
-    ##parse taxa
-    
-    
+    for(s in 1:nrow(sub_read_taxa)){
+      ##parse taxa
+      # header
+      if(grepl('^<TR><TD>', sub_read_taxa[s,])){
+        # example data line
+        # <TR><TD>Atriplex confertifolia</TD><TD>&nbsp;</TD><TD>3</TD><TD>2</TD></TR>
+       # print(sub_read_taxa[s,])
+        p2 = str_split(sub_read_taxa[s,], '[<>]')
+        taxa[taxa_line, 'SAMPLE'] = t$SAMPLE[row]
+        taxa[taxa_line, 'TAXA'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'TYPE_OF_MATERIAL'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'ORIG_COUNT'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'ABUNDANCE_CODE'] = str_replace(p2[[1]][21], '&nbsp;', '') %>% str_trim();
+        
+      }
+    }
     taxa_line = taxa_line+1
-  }
-  if(t$AGES_NUM[row] > 0){
-    print(paste('get ages for', t$SAMPLE[row]))
-    sub_read_ages = read_delim(paste('cgi-bin/', t$SAMPLE[row], "_ages.html", sep=''), delim='^') 
-    
-    
-    #parse ages
-    
-    
-    age_line = age_line+1
   }
 }
 
-
-
-
-
+for(row in 1:nrow(t)){
+  if(t$AGES_NUM[row] > 0){
+    print(paste('parse ages for', t$SAMPLE[row]))
+    sub_read_ages = read_delim(paste('cgi-bin/', t$SAMPLE[row], "_ages.html", sep=''), delim='^') 
+    for(s in 1:nrow(sub_read_ages)){
+      ##parse ages
+      # header
+      if(grepl('^<TR><TD>', sub_read_ages[s,])){
+        # example data line
+        # <TR><TD>Atriplex confertifolia</TD><TD>&nbsp;</TD><TD>3</TD><TD>2</TD></TR>
+        #print(sub_read_ages[s,])
+        p2 = str_split(sub_read_ages[s,], '[<>]')
+        ages[ages_line, 'SAMPLE'] = t$SAMPLE[row]
+        ages[ages_line, 'LAB_ID'] = str_replace(p2[[1]][5], '&nbsp;', '') %>% str_trim();
+        ages[ages_line, 'C14_AGE'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_trim();
+        ages[ages_line, 'STD_DEV'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
+        ages[ages_line, 'MATERIAL_DATED'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
+        ages[ages_line, 'COMMENTS'] = str_replace(p2[[1]][21], '&nbsp;', '') %>% str_trim();
+        
+      }
+    }
+    ages_line = ages_line+1
+  }
+}
+ 
