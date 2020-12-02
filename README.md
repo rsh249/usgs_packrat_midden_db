@@ -9,8 +9,11 @@ The original database (https://geochange.er.usgs.gov/midden/) is not machine rea
 The goal of this repository is to provide better access to these data. The entire database can now be read into your favorite coding environment, spreadsheet, or database software from the files in the [db](https://github.com/rsh249/usgs_packrat_midden_db/tree/master/db) folder.
 
 [Samples table](https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/samples.csv) -- Gives sample level data from the USGS database for all available sites.
+
 [Taxa table](https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/taxa.csv) -- Taxa identified for each sample with taxonomic data.
+
 [Ages table](https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/ages.csv) -- C14 Ages for each sample with carbon dating data.
+
 
 ## How do I use these?
 
@@ -22,14 +25,14 @@ Read directly into your favorite programming language. e.g., in R do:
 library(dplyr)
 
 samples = read.csv('https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/samples.csv')
-taxa = read.csv('https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/taxa.csv')
-ages = read.csv('https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/ages.csv')
+taxa_data = read.csv('https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/taxa.csv')
+age_data = read.csv('https://raw.githubusercontent.com/rsh249/usgs_packrat_midden_db/master/db/ages.csv')
 
 
-taxa_join = inner_join(samples, taxa, 'SAMPLE') %>% arrange(-desc(SAMPLE))
+taxa_join = inner_join(samples, taxa_data, 'SAMPLE') %>% arrange(-desc(SAMPLE))
 head(taxa_join)
 
-ages_join = inner_join(samples, ages, 'SAMPLE') %>% arrange(-desc(SAMPLE))
+ages_join = inner_join(samples, age_data, 'SAMPLE') %>% arrange(-desc(SAMPLE))
 head(ages_join)
 
 ```
