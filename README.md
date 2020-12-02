@@ -19,6 +19,8 @@ The goal of this repository is to provide better access to these data. The entir
 
 ### Option 1: read the archived data:
 
+*Check on when these files were last updated before proceeding. I plan to update this about every month, but cannot gaurantee that these updates will continue indefinitely.* Again USE AT YOUR OWN RISK.
+
 Read directly into your favorite programming language. e.g., in R do:
 
 ```{r}
@@ -36,3 +38,26 @@ ages_join = inner_join(samples, age_data, 'SAMPLE') %>% arrange(-desc(SAMPLE))
 head(ages_join)
 
 ```
+
+
+## Option 2: Build a new copy
+
+The R code in [html_parser.R]() will get a new copy of these tables and replace the repository version IF you get your own new copy of the sites2.html file. To do this you will need to go to https://geochange.er.usgs.gov/midden/search.html and press 'Start Search' at the bottom of the page. When the data page loads you will need to view the html source and copy that into sites2.html.
+
+e.g., on a git enabled terminal with R installed (and dplyr, readr, and stringr libraries) run:
+
+```{bash}
+git clone https://github.com/rsh249/usgs_packrat_midden_db
+
+# replace sites2.html via manual method above
+
+Rscript 'html_parser.R'
+
+```
+
+
+
+
+
+
+Fin!
