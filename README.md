@@ -60,4 +60,9 @@ Rscript 'html_parser.R'
 
 
 
+
+[![DOI](https://zenodo.org/badge/226961187.svg)](https://zenodo.org/badge/latestdoi/226961187)
+
+
+
 Fin!
