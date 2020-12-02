@@ -1,7 +1,7 @@
 library(dplyr)
 library(readr)
 library(stringr)
-read = read_delim('perl/sites2.html', delim='^') #false flag delimiter
+read = read_delim('sites2.html', delim='^') #false flag delimiter
 
 
 parser = function(html) {
