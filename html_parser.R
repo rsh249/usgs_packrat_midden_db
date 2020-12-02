@@ -180,14 +180,13 @@ for(row in 1:nrow(t)){
        # print(sub_read_taxa[s,])
         p2 = str_split(sub_read_taxa[s,], '[<>]')
         taxa[taxa_line, 'SAMPLE'] = t$SAMPLE[row]
-        taxa[taxa_line, 'TAXA'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_trim();
-        taxa[taxa_line, 'TYPE_OF_MATERIAL'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
-        taxa[taxa_line, 'ORIG_COUNT'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
-        taxa[taxa_line, 'ABUNDANCE_CODE'] = str_replace(p2[[1]][21], '&nbsp;', '') %>% str_trim();
-        
+        taxa[taxa_line, 'TAXA'] = str_replace(p2[[1]][5], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'TYPE_OF_MATERIAL'] = str_replace(p2[[1]][9], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'ORIG_COUNT'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
+        taxa[taxa_line, 'ABUNDANCE_CODE'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
+        taxa_line = taxa_line+1
       }
     }
-    taxa_line = taxa_line+1
   }
 }
 
@@ -209,10 +208,31 @@ for(row in 1:nrow(t)){
         ages[ages_line, 'STD_DEV'] = str_replace(p2[[1]][13], '&nbsp;', '') %>% str_trim();
         ages[ages_line, 'MATERIAL_DATED'] = str_replace(p2[[1]][17], '&nbsp;', '') %>% str_trim();
         ages[ages_line, 'COMMENTS'] = str_replace(p2[[1]][21], '&nbsp;', '') %>% str_trim();
-        
+        ages_line = ages_line+1
       }
     }
-    ages_line = ages_line+1
+    
   }
 }
+
+
+
+################# WRITE DATA ##################
+dir.create('db')
+write.csv(t, 'db/samples.csv')
+write.csv(taxa, 'db/taxa.csv')
+write.csv(ages, 'db/ages.csv')
+
+
+
+#example join
+
+test_join = inner_join(t, taxa, 'SAMPLE') %>% arrange(-desc(SAMPLE))
+head(test_join)
+
+ages_join = inner_join(t, ages, 'SAMPLE') %>% arrange(-desc(SAMPLE))
+
+
+
+
  
