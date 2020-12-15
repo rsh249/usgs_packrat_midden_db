@@ -231,9 +231,7 @@ for(i in 1:nrow(ref)) {
 }
 
 
-cbind(ref_id, ref) %>% head(
-  
-)
+ref_data = cbind(ref_id, ref) 
 
 
 
@@ -242,6 +240,7 @@ dir.create('db')
 write.csv(t, 'db/samples.csv')
 write.csv(taxa, 'db/taxa.csv')
 write.csv(ages, 'db/ages.csv')
+write.csv(ref_data, 'db/refs.csv')
 
 
 
