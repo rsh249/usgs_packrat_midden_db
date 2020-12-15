@@ -215,6 +215,26 @@ for(row in 1:nrow(t)){
   }
 }
 
+#parse reference list into table
+read_refs = read_delim('https://geochange.er.usgs.gov/midden/midref.html', delim='^') 
+names(read_refs) = 'RAW_LINES'
+
+ref = read_refs %>% filter(str_detect(RAW_LINES, "^<td>")) 
+ref_id = read_refs %>% filter(str_detect(RAW_LINES, "^<tr>"))
+
+for(i in 1:nrow(ref)) {
+  p = str_split(ref[i,], '[<>]')
+  ref[i,] = p[[1]][3]
+  
+  p2 = str_split(ref_id[i,], '[<>]')
+  ref_id[i,] = p2[[1]][7]
+}
+
+
+cbind(ref_id, ref) %>% head(
+  
+)
+
 
 
 ################# WRITE DATA ##################
